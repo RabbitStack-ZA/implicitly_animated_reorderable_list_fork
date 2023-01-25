@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:implicitly_animated_reorderable_list_fork/src/custom_sliver_animated_list.dart';
 
-import 'src.dart';
+import 'src.dart' as s;
 
 /// A Flutter ListView that implicitly animates between the changes of two lists.
 class ImplicitlyAnimatedList<E extends Object> extends StatelessWidget {
@@ -11,13 +11,13 @@ class ImplicitlyAnimatedList<E extends Object> extends StatelessWidget {
   /// Called, as needed, to build list item widgets.
   ///
   /// List items are only built when they're scrolled into view.
-  final AnimatedItemBuilder<Widget, E> itemBuilder;
+  final s.AnimatedItemBuilder<Widget, E> itemBuilder;
 
   /// An optional builder when an item was removed from the list.
   ///
   /// If not specified, the [ImplicitlyAnimatedList] uses the [itemBuilder] with
   /// the animation reversed.
-  final RemovedItemBuilder<Widget, E>? removeItemBuilder;
+  final s.RemovedItemBuilder<Widget, E>? removeItemBuilder;
 
   /// An optional builder when an item in the list was changed but not its position.
   ///
@@ -27,11 +27,11 @@ class ImplicitlyAnimatedList<E extends Object> extends StatelessWidget {
   /// the new item.
   ///
   /// If not specified, changes will appear instantaneously.
-  final UpdatedItemBuilder<Widget, E>? updateItemBuilder;
+  final s.UpdatedItemBuilder<Widget, E>? updateItemBuilder;
 
   /// Called by the DiffUtil to decide whether two object represent the same Item.
   /// For example, if your items have unique ids, this method should check their id equality.
-  final ItemDiffUtil<E> areItemsTheSame;
+  final s.ItemDiffUtil<E> areItemsTheSame;
 
   /// The duration of the animation when an item was inserted into the list.
   final Duration insertDuration;
@@ -171,8 +171,7 @@ class ImplicitlyAnimatedList<E extends Object> extends StatelessWidget {
 }
 
 /// A Flutter Sliver that implicitly animates between the changes of two lists.
-class SliverImplicitlyAnimatedList<E extends Object>
-    extends ImplicitlyAnimatedListBase<Widget, E> {
+class SliverImplicitlyAnimatedList<E extends Object> extends s.ImplicitlyAnimatedListBase<Widget, E> {
   /// Creates a Flutter Sliver that implicitly animates between the changes of two lists.
   ///
   /// {@template implicitly_animated_reorderable_list.constructor}
@@ -198,10 +197,10 @@ class SliverImplicitlyAnimatedList<E extends Object>
   const SliverImplicitlyAnimatedList({
     Key? key,
     required List<E> items,
-    required AnimatedItemBuilder<Widget, E> itemBuilder,
-    required ItemDiffUtil<E> areItemsTheSame,
-    RemovedItemBuilder<Widget, E>? removeItemBuilder,
-    UpdatedItemBuilder<Widget, E>? updateItemBuilder,
+    required s.AnimatedItemBuilder<Widget, E> itemBuilder,
+    required s.ItemDiffUtil<E> areItemsTheSame,
+    s.RemovedItemBuilder<Widget, E>? removeItemBuilder,
+    s.UpdatedItemBuilder<Widget, E>? updateItemBuilder,
     Duration insertDuration = const Duration(milliseconds: 500),
     Duration removeDuration = const Duration(milliseconds: 500),
     Duration updateDuration = const Duration(milliseconds: 500),
@@ -220,22 +219,18 @@ class SliverImplicitlyAnimatedList<E extends Object>
         );
 
   @override
-  _SliverImplicitlyAnimatedListState<E> createState() =>
-      _SliverImplicitlyAnimatedListState<E>();
+  _SliverImplicitlyAnimatedListState<E> createState() => _SliverImplicitlyAnimatedListState<E>();
 }
 
 class _SliverImplicitlyAnimatedListState<E extends Object>
-    extends ImplicitlyAnimatedListBaseState<Widget,
-        SliverImplicitlyAnimatedList<E>, E> {
+    extends s.ImplicitlyAnimatedListBaseState<Widget, SliverImplicitlyAnimatedList<E>, E> {
   @override
   Widget build(BuildContext context) {
     return CustomSliverAnimatedList(
       key: animatedListKey,
       initialItemCount: newList.length,
       itemBuilder: (context, index, animation) {
-        final E? item = data.getOrNull(index) ??
-            newList.getOrNull(index) ??
-            oldList.getOrNull(index);
+        final E? item = data.getOrNull(index) ?? newList.getOrNull(index) ?? oldList.getOrNull(index);
         final didChange = changes[item] != null;
 
         if (item == null) {

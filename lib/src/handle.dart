@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -135,11 +134,9 @@ class HandleState extends State<Handle> {
     if (!widget.enabled) return widget.child;
 
     _list = ImplicitlyAnimatedReorderableList.of(context);
-    assert(_list != null,
-    'No ancestor ImplicitlyAnimatedReorderableList was found in the hierarchy!');
+    assert(_list != null, 'No ancestor ImplicitlyAnimatedReorderableList was found in the hierarchy!');
     _reorderable = Reorderable.of(context);
-    assert(_reorderable != null,
-    'No ancestor Reorderable was found in the hierarchy!');
+    assert(_reorderable != null, 'No ancestor Reorderable was found in the hierarchy!');
     _parent = Scrollable.of(_list!.context);
 
     // Sometimes the cancel callbacks of the GestureDetector

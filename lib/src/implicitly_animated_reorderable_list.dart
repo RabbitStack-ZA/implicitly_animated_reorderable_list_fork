@@ -1,21 +1,18 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:implicitly_animated_reorderable_list_fork/src/custom_sliver_animated_list.dart';
 
-import 'src.dart';
+import 'src.dart' as s;
 
 typedef ReorderStartedCallback<E> = void Function(E item, int index);
 
-typedef ReorderFinishedCallback<E> = void Function(
-    E item, int from, int to, List<E> newItems);
+typedef ReorderFinishedCallback<E> = void Function(E item, int from, int to, List<E> newItems);
 
 /// A Flutter ListView that implicitly animates between the changes of two lists with
 /// the support to reorder its items.
-class ImplicitlyAnimatedReorderableList<E extends Object>
-    extends ImplicitlyAnimatedListBase<Reorderable, E> {
+class ImplicitlyAnimatedReorderableList<E extends Object> extends s.ImplicitlyAnimatedListBase<s.Reorderable, E> {
   /// Whether the scroll view scrolls in the reading direction.
   ///
   /// Defaults to false.
@@ -151,10 +148,10 @@ class ImplicitlyAnimatedReorderableList<E extends Object>
   const ImplicitlyAnimatedReorderableList({
     Key? key,
     required List<E> items,
-    required AnimatedItemBuilder<Reorderable, E> itemBuilder,
-    required ItemDiffUtil<E> areItemsTheSame,
-    RemovedItemBuilder<Reorderable, E>? removeItemBuilder,
-    UpdatedItemBuilder<Reorderable, E>? updateItemBuilder,
+    required s.AnimatedItemBuilder<s.Reorderable, E> itemBuilder,
+    required s.ItemDiffUtil<E> areItemsTheSame,
+    s.RemovedItemBuilder<s.Reorderable, E>? removeItemBuilder,
+    s.UpdatedItemBuilder<s.Reorderable, E>? updateItemBuilder,
     Duration insertDuration = const Duration(milliseconds: 500),
     Duration removeDuration = const Duration(milliseconds: 500),
     Duration updateDuration = const Duration(milliseconds: 500),
@@ -193,18 +190,15 @@ class ImplicitlyAnimatedReorderableList<E extends Object>
         );
 
   @override
-  ImplicitlyAnimatedReorderableListState<E> createState() =>
-      ImplicitlyAnimatedReorderableListState<E>();
+  ImplicitlyAnimatedReorderableListState<E> createState() => ImplicitlyAnimatedReorderableListState<E>();
 
   static ImplicitlyAnimatedReorderableListState? of(BuildContext context) {
-    return context
-        .findAncestorStateOfType<ImplicitlyAnimatedReorderableListState>();
+    return context.findAncestorStateOfType<ImplicitlyAnimatedReorderableListState>();
   }
 }
 
 class ImplicitlyAnimatedReorderableListState<E extends Object>
-    extends ImplicitlyAnimatedListBaseState<Reorderable,
-        ImplicitlyAnimatedReorderableList<E>, E> {
+    extends s.ImplicitlyAnimatedListBaseState<s.Reorderable, ImplicitlyAnimatedReorderableList<E>, E> {
   // The key of the custom scroll view.
   final GlobalKey _listKey = GlobalKey(debugLabel: 'list_key');
   // The key of the draggedItem.
@@ -265,7 +259,7 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
   set _pointerDelta(double value) => _pointerDeltaNotifier.value = value;
 
   final Map<Key?, GlobalKey> _keys = {};
-  final Map<Key?, ReorderableState> _items = {};
+  final Map<Key?, s.ReorderableState> _items = {};
   final Map<Key?, AnimationController> _itemTranslations = {};
   final Map<Key?, _Item> _itemBoxes = {};
 
@@ -318,17 +312,12 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
 
     // Allow the dragged item to be overscrolled to allow for
     // continous scrolling while in drag.
-    final overscrollBound =
-        _canScroll && !(hasHeader || hasFooter) ? _dragSize : 0;
+    final overscrollBound = _canScroll && !(hasHeader || hasFooter) ? _dragSize : 0;
     // Constrain the dragged item to the bounds of the list.
     const epsilon = 2.0;
-    final minDelta = (_headerHeight - (dragItem!.start + overscrollBound)) -
-        _scrollDelta -
-        epsilon;
-    final maxDelta = ((_maxScrollOffset + _listSize + overscrollBound) -
-            (dragItem!.bottom + _footerHeight)) -
-        _scrollDelta +
-        epsilon;
+    final minDelta = (_headerHeight - (dragItem!.start + overscrollBound)) - _scrollDelta - epsilon;
+    final maxDelta =
+        ((_maxScrollOffset + _listSize + overscrollBound) - (dragItem!.bottom + _footerHeight)) - _scrollDelta + epsilon;
 
     _pointerDelta = delta.clamp(minDelta, maxDelta);
     _dragDelta = _pointerDelta + _scrollDelta;
@@ -376,8 +365,7 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
     }
   }
 
-  void _dispatchMove(Key? key, double delta,
-      {VoidCallback? onEnd, Duration? duration}) {
+  void _dispatchMove(Key? key, double delta, {VoidCallback? onEnd, Duration? duration}) {
     double value = 0.0;
 
     // Remove and stop the old controller if there was one
@@ -435,8 +423,7 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
       final dragBox = _dragKey.renderBox;
       if (dragBox == null) return;
 
-      final dragOffset =
-          dragBox.localToGlobal(Offset.zero, ancestor: context.renderBox);
+      final dragOffset = dragBox.localToGlobal(Offset.zero, ancestor: context.renderBox);
       final dragItemStart = isVertical ? dragOffset.dy : dragOffset.dx;
       final dragItemEnd = dragItemStart + _dragSize;
 
@@ -527,8 +514,7 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
 
     // Boxes are in the order in which they are build, not
     // necessarily index based.
-    final boxes = _itemBoxes.values.toList()
-      ..sort((a, b) => a.index!.compareTo(b.index!));
+    final boxes = _itemBoxes.values.toList()..sort((a, b) => a.index!.compareTo(b.index!));
 
     for (final box in boxes) {
       // Dont apply any translation to the currently dragged
@@ -598,10 +584,9 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
     _controller!.jumpTo(_controller!.position.pixels);
   }
 
-  double getTranslation(Key? key) =>
-      key == dragKey ? _dragDelta : _itemTranslations[key]?.value ?? 0.0;
+  double getTranslation(Key? key) => key == dragKey ? _dragDelta : _itemTranslations[key]?.value ?? 0.0;
 
-  void registerItem(ReorderableState item) {
+  void registerItem(s.ReorderableState item) {
     _items[item.key] = item;
   }
 
@@ -620,10 +605,9 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
     final needsRebuild = _listSize == 0 || inDrag != _prevInDrag;
     _prevInDrag = inDrag;
 
-    double getSizeOfKey(GlobalKey key) =>
-        (isVertical ? key.height : key.width) ?? 0.0;
+    double getSizeOfKey(GlobalKey key) => (isVertical ? key.height : key.width) ?? 0.0;
 
-    postFrame(() {
+    s.postFrame(() {
       _listSize = getSizeOfKey(_listKey);
       _headerHeight = hasHeader ? getSizeOfKey(_headerKey) : 0.0;
       _footerHeight = hasFooter ? getSizeOfKey(_footerKey) : 0.0;
@@ -679,14 +663,14 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
             key: animatedListKey,
             initialItemCount: newList.length,
             itemBuilder: (context, index, animation) {
-              final Reorderable reorderable = buildItem(
+              final s.Reorderable reorderable = buildItem(
                 context,
                 animation,
                 data[index],
                 index,
-              ) as Reorderable;
+              ) as s.Reorderable;
 
-              postFrame(() => _measureChild(reorderable.key, index));
+              s.postFrame(() => _measureChild(reorderable.key, index));
 
               // Assign a new GlobalKey to the Reorderable
               // so we can move it in and out of the list
@@ -711,14 +695,14 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
                 final mustRebuild = _dragWidget == null;
 
                 _dragWidget = child;
-                if (mustRebuild) postFrame(() => setState(() {}));
+                if (mustRebuild) s.postFrame(() => setState(() {}));
 
                 // The placeholder of the dragged item.
                 //
                 // Make sure not to use the actual widget but only its size
                 // when they have been determined, as a widget is only allowed
                 // to be laid out once.
-                return Invisible(
+                return s.Invisible(
                   invisible: !mustRebuild,
                   child: mustRebuild ? child : SizedBox.fromSize(size: size),
                 );
@@ -748,8 +732,7 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
   }
 
   Widget _buildDraggedItem() {
-    final EdgeInsets listPadding =
-        widget.padding as EdgeInsets? ?? EdgeInsets.zero;
+    final EdgeInsets listPadding = widget.padding as EdgeInsets? ?? EdgeInsets.zero;
 
     return ValueListenableBuilder<double>(
       // ignore: sort_child_properties_last
@@ -816,8 +799,7 @@ class ImplicitlyAnimatedReorderableListState<E extends Object>
         }
       })
       ..addStatusListener((status) {
-        if (status == AnimationStatus.completed ||
-            status == AnimationStatus.dismissed) {
+        if (status == AnimationStatus.completed || status == AnimationStatus.dismissed) {
           didUpdateList = false;
         }
       });
@@ -863,9 +845,7 @@ class _Item extends Rect implements Comparable<_Item> {
   double? distance;
 
   @override
-  int compareTo(_Item other) => distance != null && other.distance != null
-      ? distance!.compareTo(other.distance!)
-      : -1;
+  int compareTo(_Item other) => distance != null && other.distance != null ? distance!.compareTo(other.distance!) : -1;
 
   @override
   String toString() => '_Item key: $key, index: $index';

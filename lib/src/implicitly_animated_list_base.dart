@@ -5,21 +5,16 @@ import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:implicitly_animated_reorderable_list_fork/src/custom_sliver_animated_list.dart';
-import 'package:meta/meta.dart';
 
 import 'src.dart';
 
-typedef AnimatedItemBuilder<W extends Widget, E> = W Function(
-    BuildContext context, Animation<double> animation, E item, int i);
+typedef AnimatedItemBuilder<W extends Widget, E> = W Function(BuildContext context, Animation<double> animation, E item, int i);
 
-typedef RemovedItemBuilder<W extends Widget, E> = W Function(
-    BuildContext context, Animation<double> animation, E item);
+typedef RemovedItemBuilder<W extends Widget, E> = W Function(BuildContext context, Animation<double> animation, E item);
 
-typedef UpdatedItemBuilder<W extends Widget, E> = W Function(
-    BuildContext context, Animation<double> animation, E item);
+typedef UpdatedItemBuilder<W extends Widget, E> = W Function(BuildContext context, Animation<double> animation, E item);
 
-abstract class ImplicitlyAnimatedListBase<W extends Widget, E extends Object>
-    extends StatefulWidget {
+abstract class ImplicitlyAnimatedListBase<W extends Widget, E extends Object> extends StatefulWidget {
   /// Called, as needed, to build list item widgets.
   ///
   /// List items are only built when they're scrolled into view.
@@ -77,8 +72,7 @@ abstract class ImplicitlyAnimatedListBase<W extends Widget, E extends Object>
   }) : super(key: key);
 }
 
-abstract class ImplicitlyAnimatedListBaseState<W extends Widget,
-        B extends ImplicitlyAnimatedListBase<W, E>, E extends Object>
+abstract class ImplicitlyAnimatedListBaseState<W extends Widget, B extends ImplicitlyAnimatedListBase<W, E>, E extends Object>
     extends State<B> with DiffCallback<E>, TickerProviderStateMixin {
   @protected
   GlobalKey<CustomSliverAnimatedListState> animatedListKey = GlobalKey();
@@ -170,10 +164,8 @@ abstract class ImplicitlyAnimatedListBaseState<W extends Widget,
     // Don't check for too long lists the list equality as
     // this would begin to take longer than the diff
     // algorithm itself.
-    final areListsShortEnoughForEqualityCheck =
-        _oldItems.length < 100 && _newItems.length < 100;
-    final areListsEqual =
-        areListsShortEnoughForEqualityCheck && listEquals(_oldItems, _newItems);
+    final areListsShortEnoughForEqualityCheck = _oldItems.length < 100 && _newItems.length < 100;
+    final areListsEqual = areListsShortEnoughForEqualityCheck && listEquals(_oldItems, _newItems);
 
     if (!areListsEqual) {
       _changes.clear();
@@ -214,14 +206,12 @@ abstract class ImplicitlyAnimatedListBaseState<W extends Widget,
   @nonVirtual
   @protected
   @override
-  bool areItemsTheSame(E oldItem, E newItem) =>
-      widget.areItemsTheSame(oldItem, newItem);
+  bool areItemsTheSame(E oldItem, E newItem) => widget.areItemsTheSame(oldItem, newItem);
 
   @mustCallSuper
   @protected
   @override
-  void onInserted(int index, E item) =>
-      list.insertItem(index, duration: widget.insertDuration);
+  void onInserted(int index, E item) => list.insertItem(index, duration: widget.insertDuration);
 
   @mustCallSuper
   @protected
@@ -233,9 +223,7 @@ abstract class ImplicitlyAnimatedListBaseState<W extends Widget,
 
     list.removeItem(
       index,
-      (context, animation) =>
-          removeItemBuilder?.call(context, animation, item) ??
-          itemBuilder(context, animation, item, index),
+      (context, animation) => removeItemBuilder?.call(context, animation, item) ?? itemBuilder(context, animation, item, index),
       duration: widget.removeDuration,
     );
   }
@@ -256,8 +244,7 @@ abstract class ImplicitlyAnimatedListBaseState<W extends Widget,
 
   @nonVirtual
   @protected
-  Widget buildItem(
-      BuildContext context, Animation<double> animation, E item, int index) {
+  Widget buildItem(BuildContext context, Animation<double> animation, E item, int index) {
     if (updateItemBuilder != null && changes[item] != null) {
       return buildUpdatedItemWidget(item);
     }
